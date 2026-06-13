@@ -75,8 +75,6 @@ OUTPUT LAYER 10 neurons → Linear(128→10) → Softmax → P(digit | image)
 │
 Predicted Digit (0–9)
 
-text
-
 Backpropagation flows right-to-left through this graph,
 computing **∂Loss/∂W** for every weight matrix via the
 chain rule of calculus — then Adam updates each weight.
@@ -268,7 +266,8 @@ pip install torch torchvision matplotlib
 
 # 3. Train the model
 python train.py
-text
+
+
 
 What happens automatically:
   ✅ MNIST dataset downloads (~11MB)
@@ -280,8 +279,9 @@ What happens automatically:
 
 Expected runtime: ~7.5 minutes on CPU
 Expected test accuracy: 98%+
+
+
 📦 Dataset
-text
 
 MNIST — Modified National Institute of
         Standards and Technology database
@@ -295,8 +295,8 @@ Input vector    784 dimensions (flattened)
 Classes         10  (digits 0 through 9)
 Source          torchvision.datasets.MNIST
 Auto-download   Yes — no manual setup needed
+
 🗂️ Project Structure
-text
 
 deep-feedforward-mnist-pytorch/
 │
@@ -313,12 +313,11 @@ deep-feedforward-mnist-pytorch/
 │
 ├── requirements.txt          ← Python dependencies
 └── README.md                 ← This file
+
+
 🧑‍💻 Author
 Shashank Kumar
-B.Tech CSE · ABES Engineering College · 2028
 
-GitHub
-LinkedIn
 
 📄 License
 MIT — free to use, modify, and distribute.
@@ -329,4 +328,5 @@ MIT — free to use, modify, and distribute.
 Built from scratch · No pretrained weights · Pure gradient descent
 
 </div> ```
+
 ````
