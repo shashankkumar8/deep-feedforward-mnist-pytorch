@@ -1,264 +1,163 @@
-# 🧠 Deep Feedforward Neural Network
+# 🧠 Deep Multilayer Perceptron for MNIST
 
-### Handwritten Digit Recognition — MNIST Benchmark
-
-<div align="center">
+**From Theory to Insight: A Production-Style Neural Network Built from Scratch**
 
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.12-EE4C2C?logo=pytorch&logoColor=white&style=for-the-badge)
-![Accuracy](https://img.shields.io/badge/Test%20Accuracy-98.16%25-2E7D32?style=for-the-badge)
+![Accuracy](https://img.shields.io/badge/Test_Accuracy-98.16%25-2E7D32?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white&style=for-the-badge)
 ![Parameters](https://img.shields.io/badge/Parameters-568K-0D47A1?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Complete-2E7D32?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-F57C00?style=for-the-badge)
 
-**A from-scratch Deep Neural Network built entirely in PyTorch —
-no pretrained models, no shortcuts — achieving 98.16% accuracy
-on the classic MNIST handwritten digit benchmark.**
+**A clean, heavily commented Deep Multilayer Perceptron (MLP) implemented purely in PyTorch that achieves 98.16% test accuracy on the MNIST benchmark while visually explaining every fundamental ML concept — exactly the foundations Amazon ML Summer School teaches.**
 
-[📊 View Results](#-results) •
-[🏗️ Architecture](#️-architecture) •
-[🧮 ML Concepts](#-ml-concepts-demonstrated) •
-[▶️ Run It](#️-how-to-run)
+This project bridges classroom theory (Probability, Statistics, Linear Algebra, Optimization) with practical implementation and rich visualizations.
 
-</div>
+[📊 Results](#-results) • [🏗️ Architecture](#️-architecture) • [🔬 Design Choices](#-why-these-design-choices) • [▶️ How to Run](#️-how-to-run)
+
+---
+
+## ✨ Features
+
+- **98.16% Test Accuracy** with only 0.08% train-val gap
+- **Rich Visualizations** — training curves, confusion matrix, sample predictions with confidence, and learned weight filters
+- **Heavy Mathematical Comments** explaining Neural Networks, Backpropagation, Gradient Descent, Linear Algebra, Softmax, Cross-Entropy, BatchNorm, and Dropout
+- **Per-class accuracy analysis** with human-like error patterns
+- **Production-style code** with clean structure, early stopping, learning rate scheduling, and model checkpointing
+- **Zero GPU required** — runs efficiently on CPU in ~7.5 minutes
 
 ---
 
 ## 🎯 Results
 
-<div align="center">
-
-| Metric            | Score      | Status               |
-| ----------------- | ---------- | -------------------- |
-| **Test Accuracy** | **98.16%** | ✅ Above 98% target  |
-| Test Loss         | 0.0654     | ✅                   |
-| Best Val Accuracy | 98.24%     | ✅                   |
-| Train → Val Gap   | **0.08%**  | ✅ Near-zero overfit |
-| Total Parameters  | 568,970    | ✅                   |
-| Training Device   | CPU only   | ✅ No GPU needed     |
-| Avg Epoch Time    | 44.79s     | ✅                   |
-| Total Train Time  | ~7.5 min   | ✅                   |
-
-</div>
-
-> 💡 **Train-Val gap of only 0.08%** confirms the model
-> generalises almost perfectly — a direct demonstration
-> of successful bias-variance control through
-> Dropout and Batch Normalization.
+| Metric                   | Value        | Insight                            |
+| ------------------------ | ------------ | ---------------------------------- |
+| **Test Accuracy**        | **98.16%**   | Strong generalization              |
+| Test Loss                | 0.0654       | Low confidence error               |
+| Best Validation Accuracy | **98.24%**   | Excellent convergence              |
+| Train-Val Gap            | **0.08%**    | Near-perfect bias-variance balance |
+| Total Parameters         | 568,970      | Efficient architecture             |
+| Average Epoch Time       | 44.79s (CPU) | ~7.5 minutes total training        |
 
 ---
 
 ## 🏗️ Architecture
 
-┌─────────────────────────────────────────────────────┐
-│ INPUT LAYER │
-│ 784 neurons ← 28×28 grayscale pixel image │
-│ Flattened into a single vector │
-└──────────────────────┬──────────────────────────────┘
-│ y = Wx + b (Linear Algebra)
-▼
-┌─────────────────────────────────────────────────────┐
-│ HIDDEN LAYER 1 (512 neurons) │
-│ Linear(784→512) → BatchNorm → ReLU → Drop(0.3) │
-│ Weight Matrix W₁: shape [512 × 784] │
-└──────────────────────┬──────────────────────────────┘
-│ Backprop flows ← this way
-▼
-┌─────────────────────────────────────────────────────┐
-│ HIDDEN LAYER 2 (256 neurons) │
-│ Linear(512→256) → BatchNorm → ReLU → Drop(0.2) │
-│ Weight Matrix W₂: shape [256 × 512] │
-└──────────────────────┬──────────────────────────────┘
-▼
-┌─────────────────────────────────────────────────────┐
-│ HIDDEN LAYER 3 (128 neurons) │
-│ Linear(256→128) → BatchNorm → ReLU │
-│ Weight Matrix W₃: shape [128 × 256] │
-└──────────────────────┬──────────────────────────────┘
-▼
-┌─────────────────────────────────────────────────────┐
-│ OUTPUT LAYER (10 neurons) │
-│ Linear(128→10) → Softmax → Probability per digit │
-│ Weight Matrix W₄: shape [10 × 128] │
-└──────────────────────┬──────────────────────────────┘
-▼
-🎯 Predicted Digit (0–9)
+**Deep Feedforward Neural Network (MLP)**
 
-text
+| Layer    | Neurons | Activation | Regularization           | Weight Shape |
+| -------- | ------- | ---------- | ------------------------ | ------------ |
+| Input    | 784     | -          | Flattened 28×28 image    | -            |
+| Hidden 1 | 512     | ReLU       | BatchNorm + Dropout(0.3) | (512 × 784)  |
+| Hidden 2 | 256     | ReLU       | BatchNorm + Dropout(0.2) | (256 × 512)  |
+| Hidden 3 | 128     | ReLU       | BatchNorm                | (128 × 256)  |
+| Output   | 10      | Softmax    | -                        | (10 × 128)   |
 
 **Total Learnable Parameters: 568,970**
-Trained entirely via **Gradient Descent + Backpropagation**
+
+Every forward pass follows `y = Wx + b`. Gradients are computed via backpropagation using the chain rule.
 
 ---
 
 ## 📊 Training Progress
 
-<div align="center">
-
-| Epoch  | Train Loss | Train Acc  | Val Loss   | Val Acc    | Status         |
-| ------ | ---------- | ---------- | ---------- | ---------- | -------------- |
-| 1      | 0.2654     | 92.11%     | 0.1161     | 96.39%     | 🚀 Cold start  |
-| 2      | 0.1334     | 95.82%     | 0.0963     | 96.98%     | 📈 Rising fast |
-| 4      | 0.0902     | 97.12%     | 0.0754     | 97.71%     | 📈 Improving   |
-| 6      | 0.0706     | 97.67%     | 0.0784     | 97.56%     | 🔧 LR adjusted |
-| 8      | 0.0563     | 98.14%     | 0.0710     | 98.01%     | ✅ Hit 98%     |
-| 9      | 0.0541     | 98.28%     | 0.0636     | 98.04%     | ✅ Stable      |
-| **10** | **0.0480** | **98.43%** | **0.0597** | **98.24%** | 🏆 Best        |
-
-</div>
-
-> 🔍 **Epoch 6 dip** in val accuracy (97.56%) is where the
-> learning rate scheduler triggered — reducing LR when
-> val loss plateaued. This is **ReduceLROnPlateau** in action,
-> a classic example of adaptive optimization.
+| Epoch  | Train Loss | Train Acc  | Val Loss   | Val Acc    | Notes                  |
+| ------ | ---------- | ---------- | ---------- | ---------- | ---------------------- |
+| 1      | 0.2654     | 92.11%     | 0.1161     | 96.39%     | Rapid initial learning |
+| 5      | 0.0780     | 97.49%     | 0.0749     | 97.71%     | Strong convergence     |
+| **10** | **0.0480** | **98.43%** | **0.0597** | **98.24%** | Final best model       |
 
 ---
 
-## 🎓 Per-Class Test Accuracy
+## 🎓 Per-Class Accuracy & Human-Like Errors
 
-<div align="center">
+| Digit | Accuracy   | Difficulty  | Most Confused With |
+| ----- | ---------- | ----------- | ------------------ |
+| 1     | **99.21%** | Very Easy   | —                  |
+| 2     | 98.93%     | Easy        | 7                  |
+| 0     | 98.67%     | Easy        | —                  |
+| **9** | **96.93%** | **Hardest** | **3 & 4**          |
 
-| Digit | Accuracy   | Visual Difficulty | Most Confused With |
-| ----- | ---------- | ----------------- | ------------------ |
-| **1** | **99.21%** | 🟢 Easy           | —                  |
-| **2** | **98.93%** | 🟢 Easy           | 7 (curved top)     |
-| **0** | **98.67%** | 🟢 Easy           | —                  |
-| **6** | **98.33%** | 🟡 Medium         | —                  |
-| **3** | **98.02%** | 🟡 Medium         | 2, 5               |
-| **5** | **97.98%** | 🟡 Medium         | 3, 6               |
-| **4** | **97.96%** | 🟡 Medium         | 9 (11 errors)      |
-| **7** | **97.67%** | 🟡 Medium         | 2 (10 errors)      |
-| **8** | **97.74%** | 🟡 Medium         | 9                  |
-| **9** | **96.93%** | 🔴 Hardest        | 3, 4               |
-
-</div>
-
-> 🧠 **Why is digit 9 hardest?**
-> Digit 9 shares visual features with both 3 (curved bottom)
-> and 4 (angular stroke patterns). This mirrors human visual
-> cognition — the same ambiguities humans struggle with appear
-> as classification errors in the neural network, validating
-> that the model learned genuine visual structure rather than
-> memorizing patterns.
+> **🧠 Why is digit 9 the hardest?**  
+> Digit 9 shares visual features with both 3 (curved bottom) and 4 (angular stroke patterns). This mirrors human visual cognition — the same ambiguities humans struggle with appear as classification errors in the neural network. This validates that the model learned **genuine visual structure** rather than simply memorizing pixel patterns.
 
 ---
 
 ## 🧮 ML Concepts Demonstrated
 
-<div align="center">
-
-| Concept                 | What It Does                       | This Project               |
-| ----------------------- | ---------------------------------- | -------------------------- |
-| **Neural Networks**     | Universal function approximators   | 4-layer feedforward NN     |
-| **Linear Algebra**      | Core math of forward pass          | `y = Wx + b` per layer     |
-| **Backpropagation**     | Compute gradients via chain rule   | PyTorch autograd           |
-| **Gradient Descent**    | Minimize loss iteratively          | Adam optimizer             |
-| **Cross-Entropy Loss**  | Penalize wrong class probabilities | `−log(P(true class))`      |
-| **Softmax**             | Convert logits to probabilities    | Output layer               |
-| **Dropout**             | Random neuron deactivation         | p=0.3 layer1, p=0.2 layer2 |
-| **Batch Normalization** | Normalize layer activations        | After every Linear layer   |
-| **Bias-Variance**       | Generalization tradeoff            | Train-Val gap = **0.08%**  |
-| **Learning Rate Decay** | Adaptive LR scheduling             | ReduceLROnPlateau          |
-| **He Initialization**   | Optimal weight initialization      | `kaiming_normal_`          |
-| **Confusion Matrix**    | Per-class error analysis           | 10×10 digit matrix         |
-
-</div>
+| Concept                 | Implementation                                          | Why It Matters                            |
+| ----------------------- | ------------------------------------------------------- | ----------------------------------------- |
+| Neural Networks         | 4-layer Deep MLP                                        | Universal function approximator           |
+| Linear Algebra          | Matrix multiplications (`y = Wx + b`)                   | Foundation of every forward pass          |
+| Backpropagation         | PyTorch autograd + chain rule                           | How networks actually learn               |
+| Gradient Descent        | Adam optimizer                                          | Efficient loss minimization               |
+| Softmax + Cross-Entropy | Output layer & loss function                            | Mathematically optimal for classification |
+| Regularization          | BatchNorm + Dropout                                     | Prevents overfitting                      |
+| Model Evaluation        | Confusion matrix, per-class accuracy, confidence scores | Real-world performance insight            |
 
 ---
 
 ## 🔬 Why These Design Choices?
 
-QUESTION: Why Adam and not plain SGD?
-ANSWER : Adam adapts learning rate per parameter
-using momentum + RMSprop combination.
-Converges ~3x faster on MNIST than SGD.
+**Q: Why Adam and not plain SGD?**  
+**A:** Adam adapts learning rate per parameter using momentum + RMSprop. It converges ~3× faster than SGD on MNIST.
 
-QUESTION: Why Batch Normalization?
-ANSWER : Without BatchNorm, deeper layers receive
-inputs with shifting distributions each
-batch (internal covariate shift).
-BatchNorm fixes mean=0, var=1 per batch
-→ faster training, more stable gradients.
+**Q: Why Batch Normalization?**  
+**A:** Without BatchNorm, deeper layers suffer from internal covariate shift (changing input distributions). BatchNorm normalizes activations to mean=0, variance=1 per batch — leading to faster and more stable training.
 
-QUESTION: Why Dropout at 0.3 and 0.2?
-ANSWER : Higher dropout (0.3) in layer 1 because
-it has most parameters (784×512 = 401K).
-Lower dropout (0.2) in layer 2 as
-representations become more abstract.
-No dropout in layer 3 — too close to
-output, regularization would hurt more.
+**Q: Why Dropout rates of 0.3 and 0.2?**  
+**A:** Layer 1 has the highest number of parameters (≈401K), so stronger regularization (0.3) is applied. Layer 2 uses 0.2 as representations become more abstract. No dropout before the output layer — it would hurt final decision-making.
 
-QUESTION: Why Cross-Entropy and not MSE?
-ANSWER : MSE treats class prediction as regression.
-Cross-Entropy measures probability
-divergence directly — mathematically
-correct for classification via MLE.
-MSE on one-hot labels causes vanishing
-gradients in output layer.
-
-text
+**Q: Why Cross-Entropy instead of MSE?**  
+**A:** MSE treats classification as regression and leads to vanishing gradients. Cross-Entropy directly measures probability divergence and is the maximum likelihood estimator for multi-class classification.
 
 ---
 
-## 📁 Output Files Generated
+## 📁 Generated Visualizations
 
-| File                       | Description                             | What to Look For                       |
-| -------------------------- | --------------------------------------- | -------------------------------------- |
-| `training_curves.png`      | 4-panel: Loss, Accuracy, Gap, Per-class | Converging curves, small train-val gap |
-| `confusion_matrix.png`     | 10×10 digit confusion heatmap           | Dark diagonal = high accuracy          |
-| `sample_predictions.png`   | 25 test images with confidence %        | Green=correct, Red=wrong               |
-| `weight_visualization.png` | 32 learned first-layer filters          | Stroke and edge patterns               |
-| `mnist_model.pth`          | Best model checkpoint                   | Load for inference                     |
+| File                       | Description                               | Insight                              |
+| -------------------------- | ----------------------------------------- | ------------------------------------ |
+| `training_curves.png`      | 2×2 grid: Loss & Accuracy (Train vs Val)  | Smooth convergence, minimal gap      |
+| `confusion_matrix.png`     | 10×10 heatmap of predictions              | Clear view of digit 9 confusion      |
+| `sample_predictions.png`   | 5×5 grid of test images with confidence % | Green = correct, Red = wrong         |
+| `weight_visualization.png` | First-layer weights as 32 learned filters | Network learns stroke/edge detectors |
 
 ---
 
 ## ▶️ How to Run
 
 ````bash
-# 1. Clone the repository
-git clone https://github.com/shashankkumar8/deep-feedforward-mnist-pytorch.git
-cd deep-feedforward-mnist-pytorch
+# Clone the repository
+git clone https://github.com/shashankkumar8/deep-mlp-mnist-pytorch.git
+cd deep-mlp-mnist-pytorch
 
-# 2. Install dependencies
-pip install torch torchvision matplotlib
+# Install dependencies
+pip install -r requirements.txt
 
-# 3. Train the model
+# Train the model
 python train.py
-
-# 4. MNIST dataset downloads automatically (~11MB)
-# 5. All plots save to current directory
-# 6. Best model saves as mnist_model.pth
-Expected runtime: ~7.5 minutes on CPU
+All plots and the best model (mnist_model.pth) are automatically saved. Expected runtime: ~7.5 minutes on CPU.
 
 📦 Dataset
-text
+MNIST — 70,000 handwritten digit images
 
-MNIST (Modified National Institute of Standards
-       and Technology database)
+Training: 48,000 | Validation: 12,000 | Test: 10,000
+Input: 28×28 grayscale → flattened to 784 dimensions
+Classes: 10 digits (0–9)
+💡 Motivation & Learnings
+This project transformed abstract concepts from my coursework into working, visual code. Seeing the first-layer weights emerge as stroke detectors was a breakthrough moment — it showed the network was truly learning visual features, not just memorizing.
 
-Total Images  : 70,000 handwritten digit scans
-Training Set  : 48,000 (80% of official train)
-Validation Set: 12,000 (20% of official train)
-Test Set      : 10,000 (official test, unseen)
-Image Size    : 28 × 28 pixels, grayscale
-Input Vector  : 784 dimensions (flattened)
-Classes       : 10 (digits 0 through 9)
-Source        : torchvision.datasets.MNIST
-🧑‍💻 Author
-Shashank Kumar
-B.Tech CSE | ABES Engineering College | 2028
+The tiny 0.08% train-val gap gave me confidence in building reliable systems. However, I still crave deeper theoretical guidance on scaling these foundations to real-world problems at Amazon scale. This is why I am applying to Amazon ML Summer School 2026 — to learn directly from Amazon Scientists and strengthen my core ML understanding.
 
-GitHub
-LinkedIn
+Built with curiosity, rigorous self-learning, and a desire to master foundational Machine Learning.
 
-📄 License
-MIT License — free to use, modify, and distribute.
+Author: Shashank Kumar
+B.Tech Computer Science | ABES Engineering College | Expected 2028
 
-<div align="center">
-⭐ Star this repo if it helped you understand Deep Learning!
-
-Built from scratch — no pretrained weights,
-no transfer learning, pure gradient descent.
+GitHub: shashankkumar8
+LinkedIn: linkedin.com/in/shashank-kumar-2b574228b
+<div align="center"> ⭐ If this repository helped you understand neural networks better, please star it!
+Built from scratch — no pretrained models, no shortcuts, pure gradient descent.
 
 </div> ```
 ````
