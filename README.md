@@ -56,23 +56,20 @@ on the classic MNIST handwritten digit benchmark.**
 ---
 
 ## 🏗️ Architecture
-
-INPUT LAYER 784 neurons ← 28×28 grayscale image flattened
+INPUT LAYER: 784 neurons (28×28 grayscale image)
 │
-y = Wx + b (Linear Algebra: matrix multiply)
+├─► Linear(784 → 512) + BatchNorm + ReLU + Dropout(0.3)
+│   (W₁ shape: [512 × 784] | 401,408 params)
 │
-HIDDEN LAYER 1 512 neurons → Linear(784→512) + BatchNorm + ReLU + Dropout(0.3)
-│ W₁ shape: [512 × 784] | params: 401,408
+├─► Linear(512 → 256) + BatchNorm + ReLU + Dropout(0.2)
+│   (W₂ shape: [256 × 512] | 131,072 params)
 │
-HIDDEN LAYER 2 256 neurons → Linear(512→256) + BatchNorm + ReLU + Dropout(0.2)
-│ W₂ shape: [256 × 512] | params: 131,072
+├─► Linear(256 → 128) + BatchNorm + ReLU
+│   (W₃ shape: [128 × 256] | 32,768 params)
 │
-HIDDEN LAYER 3 128 neurons → Linear(256→128) + BatchNorm + ReLU
-│ W₃ shape: [128 × 256] | params: 32,768
-│
-OUTPUT LAYER 10 neurons → Linear(128→10) → Softmax → P(digit | image)
-│ W₄ shape: [10 × 128] | params: 1,280
-│
+└─► OUTPUT LAYER: 10 neurons → Linear(128 → 10) → Softmax
+    (W₄ shape: [10 × 128] | 1,280 params)
+    
 Predicted Digit (0–9)
 
 Backpropagation flows right-to-left through this graph,
@@ -255,29 +252,36 @@ variance across all layers from the start.
 ---
 
 ## ▶️ How to Run
+Follow these steps to train the model locally:
 
-````bash
-# 1. Clone the repository
+Clone the repository:
+
+Bash
 git clone https://github.com/shashankkumar8/deep-feedforward-mnist-pytorch.git
 cd deep-feedforward-mnist-pytorch
+Install dependencies:
 
-# 2. Install dependencies
+Bash
 pip install torch torchvision matplotlib
+Execute the training script:
 
-# 3. Train the model
+Bash
 python train.py
 
-
-
 What happens automatically:
-  ✅ MNIST dataset downloads (~11MB)
-  ✅ Model trains for 10 epochs
-  ✅ Best model saves as mnist_model.pth
-  ✅ All 4 plots save to current folder
-  ✅ Per-class accuracy printed to terminal
-  ✅ Confusion matrix printed to terminal
+✅ Dataset: MNIST downloads automatically (~11MB).
 
-Expected runtime: ~7.5 minutes on CPU
+✅ Training: The model trains for 10 epochs.
+
+✅ Checkpointing: The best model is saved as mnist_model.pth.
+
+✅ Visualization: 4 performance plots are saved to your current folder.
+
+✅ Logging: Per-class accuracy and confusion matrix are printed to the terminal.
+
+Expected runtime: ~7.5 minutes on CPU.
+
+
 Expected test accuracy: 98%+
 
 
@@ -322,11 +326,9 @@ Shashank Kumar
 📄 License
 MIT — free to use, modify, and distribute.
 
-<div align="center">
+
 ⭐ Star this repo if it helped you understand Deep Learning
 
 Built from scratch · No pretrained weights · Pure gradient descent
 
-</div> ```
 
-````
